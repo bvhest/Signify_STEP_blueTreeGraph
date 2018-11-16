@@ -1,0 +1,1 @@
+/home/hestbv/Tools/neo4j-community-3.2.0/bin/neo4j-shell -path /home/hestbv/Tools/neo4j-community-3.2.0/data/graph.db -config /home/hestbv/Tools/neo4j-community-3.2.0/conf/neo4j.properties -file 20_neo4j-importCSV.cql

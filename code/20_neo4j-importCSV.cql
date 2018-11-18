@@ -14,28 +14,32 @@
 // Using CREATE will be more performand.
 
 // each node in the bluetree must be unique:
-CREATE CONSTRAINT ON (bt:BlueTree) ASSERT bt.id IS UNIQUE;
+//CREATE CONSTRAINT ON (bt:BlueTree) ASSERT bt.id IS UNIQUE;
 
+//
+// issues:
+// 1) how to deal with double quotes within the text-strings in a csv-file ?
+// https://neo4j.com/developer/kb/how-do-i-use-load-csv-with-data-including-quotes/
 
-using periodic commit 5000
-load csv with headers from "file:/home/hestbv/Projecten/Neo4j/Signify/data/raw/prod_blue_tree_test.csv"
-as nodes
-create (bluetree:BlueTree {id: nodes.id, name: nodes.name});
+USING PERIODIC COMMIT 5000
+LOAD csv WITH HEADERS FROM "file:///prod_blue_tree_test.csv"
+AS nodes
+CREATE (bt:BlueTree {id: nodes.id, name: nodes.name, type: nodes.type});
 
 // create indexes
-CREATE INDEX ON :BlueTree(name);
-CREATE INDEX ON :BlueTree(id);
+//CREATE INDEX ON :BlueTree(name);
+//CREATE INDEX ON :BlueTree(id);
 
-schema await
+//schema await
 
 
 // each attribute must be unique:
 CREATE CONSTRAINT ON (a:Attribute) ASSERT a.id IS UNIQUE;
 
-using periodic commit 5000
-load csv with headers from "file:/home/hestbv/Projecten/Neo4j/Signify/data/raw/attributes_test.csv"
-as nodes
-create (attribute:Attribute {id: nodes.id, name: nodes.name});
+USING PERIODIC COMMIT 5000
+LOAD csv WITH HEADERS FROM "file:///attributes_test.csv"
+AS nodes
+CREATE (attribute:Attribute {id: nodes.id, name: nodes.name});
 
 // create indexes
 CREATE INDEX ON :Attribute(id);
@@ -48,28 +52,40 @@ schema await
 
 // blue-tree relations
 USING PERIODIC COMMIT 5000
-load csv with headers from "file:/home/hestbv/Projecten/Neo4j/Signify/data/raw/prod_blue_tree_test.csv"
-as rels
-match (bluetreeChild:BlueTree {id: rels.id}),(bluetreeParent:BlueTree {id: rels.parent_id})
-create (bluetreeChild)-[rel:BELONGS_TO]->(bluetreeParent);
+LOAD csv WITH HEADERS FROM "file:///prod_blue_tree_test.csv"
+AS rels
+MATCH (bluetreeChild:BlueTree {id: rels.id}),(bluetreeParent:BlueTree {id: rels.parent_id})
+CREATE (bluetreeChild)-[rel:BELONGS_TO]->(bluetreeParent);
 
 // attribute to blue-tree relations
-USING PERIODIC COMMIT 5000
-load csv with headers from "file:/home/hestbv/Projecten/Neo4j/Signify/data/raw/attributes_test.csv"
-as rels
-match (attribute:Attribute {id: rels.id}),(bluetree:BlueTree {id: rels.parent_id})
-create (attribute)-[rel:VALID_FOR]->(bluetree);
-
+//
 // issues:
 // 1) how to deal with comma-separated list ?
 // 2) how to define metadata on the relations ?
 
-ad 1: check:
-  - https://neo4j.com/docs/developer-manual/current/cypher/clauses/unwind/
-  - https://markhneedham.com/blog/2015/06/04/neo4j-cypher-step-by-step-to-creating-a-linked-list-of-adjacent-nodes-using-unwind/
+//ad 1: check:
+//  - https://neo4j.com/docs/developer-manual/current/cypher/clauses/unwind/
+//  - https://markhneedham.com/blog/2014/07/10/neo4j-load-csv-processing-hidden-arrays-in-your-csv-documents/
 
+USING PERIODIC COMMIT 5000
+LOAD csv WITH HEADERS FROM "file:///attributes_test.csv"
+AS row
+WITH row, split(row.reference, ";") AS rels
+UNWIND rels AS rel
+MATCH (at:Attribute {id: row.id}) 
+MATCH (bt:BlueTree {id: rel}) 
+MERGE (at)-[:VALID_FOR]->(bt);
 
-MATCH (T2:Test2)
-UNWIND split(T2.from, ",") as id
-MATCH (T1:Test1) WHERE T1._id = id
-MERGE (T1)-[:HAS]->(T2)
+//ad 2: check:
+//  - https://stackoverflow.com/questions/47567524/how-to-conditionally-add-property-to-relationship-from-csv-in-neo4j
+
+USING PERIODIC COMMIT 5000
+LOAD csv WITH HEADERS FROM "file:///attributes_test.csv"
+AS row
+WITH row, split(row.mandatory, ";") AS rels
+UNWIND rels AS rel
+MATCH (at:Attribute {id: row.id}) 
+MATCH (bt:BlueTree {id: rel}) 
+MERGE (at)-[r:VALID_FOR]->(bt)
+ON CREATE SET r.mandatory = true
+ON MATCH SET r.mandatory = true;

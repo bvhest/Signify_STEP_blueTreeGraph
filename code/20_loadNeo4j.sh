@@ -13,8 +13,8 @@ then
   mkdir /home/hestbv/Tools/neo4j-community-3.2.0/data/databases/graph.db/import
 fi
 # cp data-files to Neo4j import-directory:
-cp /home/hestbv/Projecten/Neo4j/Signify/data/raw/prod_blue_tree.csv /home/hestbv/Tools/neo4j-community-3.2.0/data/databases/graph.db/import/prod_blue_tree_test.csv
-cp /home/hestbv/Projecten/Neo4j/Signify/data/raw/attributes.csv /home/hestbv/Tools/neo4j-community-3.2.0/data/databases/graph.db/import/attributes_test.csv
+cp /home/hestbv/Projecten/Neo4j/Signify/data/csv/prod_blue_tree.csv /home/hestbv/Tools/neo4j-community-3.2.0/data/databases/graph.db/import/prod_blue_tree_test.csv
+cp /home/hestbv/Projecten/Neo4j/Signify/data/csv/attributes.csv /home/hestbv/Tools/neo4j-community-3.2.0/data/databases/graph.db/import/attributes_test.csv
 
 # load data:
-/home/hestbv/Tools/neo4j-community-3.2.0/bin/neo4j-shell -path /home/hestbv/Tools/neo4j-community-3.2.0/data/databases/graph.db -config /home/hestbv/Tools/neo4j-community-3.2.0/conf/neo4j.conf -file 20_neo4j-importCSV.cql
+/home/hestbv/Tools/neo4j-community-3.2.0/bin/neo4j-shell -path /home/hestbv/Tools/neo4j-community-3.2.0/data/databases/graph.db -config /home/hestbv/Tools/neo4j-community-3.2.0/conf/neo4j.conf -file 20_neo4j-importCSV.cql > databaseCreation.log

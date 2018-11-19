@@ -1,4 +1,6 @@
 /data/raw/source/
 /data/raw/temp/
+/images/
 
 *.log
+*.xml

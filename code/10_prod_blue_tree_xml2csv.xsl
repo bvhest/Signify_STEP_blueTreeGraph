@@ -13,7 +13,7 @@
 
   <!-- create lines with tree-node data: -->
   <xsl:template match="Product">
-"<xsl:value-of select="@ID" />","<xsl:value-of select="fn:replace(Name, '""','')" />","<xsl:value-of select="@UserTypeID" />","<xsl:value-of select="parent::node()/@ID" />"<xsl:text>&#xD;</xsl:text>
+"<xsl:value-of select="@ID" />","<xsl:value-of select="fn:replace(Name, '&quot;','')" />","<xsl:value-of select="@UserTypeID" />","<xsl:value-of select="parent::node()/@ID" />"<xsl:text>&#xD;</xsl:text>
   </xsl:template>
 
 </xsl:stylesheet>

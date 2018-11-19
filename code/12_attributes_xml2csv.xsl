@@ -13,7 +13,7 @@
 
   <!-- create lines with tree-node data: -->
   <xsl:template match="Attribute">
-"<xsl:value-of select="@ID" />","<xsl:value-of select="fn:replace(Name, '""','')" />","<xsl:value-of select="MetaData/Value[@AttributeID='Mandatory_In_Blue_Tree_Node']" />","<xsl:value-of select="MetaData/Value[@AttributeID='ValidIn']" />"<xsl:text>&#xD;</xsl:text>
+"<xsl:value-of select="@ID" />","<xsl:value-of select="fn:replace(Name, '&quot;','')" />","<xsl:value-of select="MetaData/Value[@AttributeID='ValidIn']" />","<xsl:value-of select="MetaData/Value[@AttributeID='Mandatory_In_Blue_Tree_Node']" />"<xsl:text>&#xD;</xsl:text>
   </xsl:template>
 
 </xsl:stylesheet>

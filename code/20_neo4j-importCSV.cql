@@ -14,7 +14,7 @@
 // Using CREATE will be more performand.
 
 // each node in the bluetree must be unique:
-//CREATE CONSTRAINT ON (bt:BlueTree) ASSERT bt.id IS UNIQUE;
+CREATE CONSTRAINT ON (bt:BlueTree) ASSERT bt.id IS UNIQUE;
 
 //
 // issues:
@@ -27,8 +27,8 @@ AS nodes
 CREATE (bt:BlueTree {id: nodes.id, name: nodes.name, type: nodes.type});
 
 // create indexes
-//CREATE INDEX ON :BlueTree(name);
-//CREATE INDEX ON :BlueTree(id);
+CREATE INDEX ON :BlueTree(name);
+//CREATE INDEX ON :BlueTree(id); // already created by definition of unique constraint
 
 //schema await
 
@@ -42,7 +42,7 @@ AS nodes
 CREATE (attribute:Attribute {id: nodes.id, name: nodes.name});
 
 // create indexes
-CREATE INDEX ON :Attribute(id);
+//CREATE INDEX ON :Attribute(id);
 
 schema await
 
@@ -74,7 +74,21 @@ WITH row, split(row.reference, ";") AS rels
 UNWIND rels AS rel
 MATCH (at:Attribute {id: row.id}) 
 MATCH (bt:BlueTree {id: rel}) 
-MERGE (at)-[:VALID_FOR]->(bt);
+MERGE (at)-[r:VALID_FOR]->(bt)
+ON CREATE SET r.mandatory = false
+ON MATCH SET r.mandatory = false;
+// 449 relations...
+
+USING PERIODIC COMMIT 5000
+LOAD csv WITH HEADERS FROM "file:///attributes_test.csv"
+AS row
+WITH row, split(row.mandatory, ";") AS rels
+UNWIND rels AS rel
+MATCH (at:Attribute {id: row.id}) 
+MATCH (bt:BlueTree {id: rel}) 
+MERGE (at)-[:MANDATORY_FOR]->(bt);
+// 8026 relations...
+
 
 //ad 2: check:
 //  - https://stackoverflow.com/questions/47567524/how-to-conditionally-add-property-to-relationship-from-csv-in-neo4j

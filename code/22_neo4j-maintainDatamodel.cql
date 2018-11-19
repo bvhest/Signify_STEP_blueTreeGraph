@@ -24,4 +24,27 @@ RETURN bt;
 //  -STEP.*
 MATCH (bt:BlueTree{name:"Lamp Drivers"})
 RETURN bt;
+// only the related bluetree objects show up...
 
+MATCH (at:Attribute{id:"LINEVOLT"})
+RETURN at;
+// does not exist: not all attributes have been loaded...
+
+MATCH path=(p:BlueTree{name:"Product Maintenance"})-[:BELONGS_TO*0..5]->(BlueTree{type:"Final Product") // match 0 to 5 CONTENTS hops
+RETURN path, length(path) as len
+ORDER BY len desc;
+
+MATCH (p:BlueTree{name:"Product Maintenance"})-[:BELONGS_TO*]->(fp:BlueTree{type:"Final Product"}) 
+RETURN fp;
+
+// top-down:
+// https://stackoverflow.com/questions/28120002/returning-an-entire-hierarchy-tree-using-neo4j-cypher
+MATCH (category:Category { id: "whatever user picked" })-[:narrower]->(children:Category)
+RETURN children
+ORDER BY children.name;
+
+// better: bottom-up
+// get all final products, create a relation from the fp to the attribute that is a copy of the first category-to-attribute relation that is found.
+MATCH (fp:BlueTree{type:"Final Product"})-[:BELONGS_TO*]->(parent:BlueTree)<-[rel:VALID_FOR]-(at:Attribute)
+MERGE (at)-[r:VALID_FOR]->(fp)
+ON CREATE SET r.mandatory = rel.mandatory;

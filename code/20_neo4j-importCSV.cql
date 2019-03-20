@@ -70,7 +70,7 @@ CREATE (bluetreeChild)-[rel:BELONGS_TO]->(bluetreeParent);
 USING PERIODIC COMMIT 5000
 LOAD csv WITH HEADERS FROM "file:///attributes_test.csv"
 AS row
-WITH row, split(row.reference, ";") AS rels
+WITH row, split(row.valid_for, ";") AS rels
 UNWIND rels AS rel
 MATCH (at:Attribute {id: row.id}) 
 MATCH (bt:BlueTree {id: rel}) 
@@ -79,14 +79,16 @@ ON CREATE SET r.mandatory = false
 ON MATCH SET r.mandatory = false;
 // 449 relations...
 
-USING PERIODIC COMMIT 5000
-LOAD csv WITH HEADERS FROM "file:///attributes_test.csv"
-AS row
-WITH row, split(row.mandatory, ";") AS rels
-UNWIND rels AS rel
-MATCH (at:Attribute {id: row.id}) 
-MATCH (bt:BlueTree {id: rel}) 
-MERGE (at)-[:MANDATORY_FOR]->(bt);
+// not required as we have defined the mandatory attribute on the VALID_FOR-relation...
+//
+//USING PERIODIC COMMIT 5000
+//LOAD csv WITH HEADERS FROM "file:///attributes_test.csv"
+//AS row
+//WITH row, split(row.mandatory_for, ";") AS rels
+//UNWIND rels AS rel
+//MATCH (at:Attribute {id: row.id}) 
+//MATCH (bt:BlueTree {id: rel}) 
+//MERGE (at)-[:MANDATORY_FOR]->(bt);
 // 8026 relations...
 
 
@@ -96,7 +98,7 @@ MERGE (at)-[:MANDATORY_FOR]->(bt);
 USING PERIODIC COMMIT 5000
 LOAD csv WITH HEADERS FROM "file:///attributes_test.csv"
 AS row
-WITH row, split(row.mandatory, ";") AS rels
+WITH row, split(row.mandatory_for, ";") AS rels
 UNWIND rels AS rel
 MATCH (at:Attribute {id: row.id}) 
 MATCH (bt:BlueTree {id: rel}) 

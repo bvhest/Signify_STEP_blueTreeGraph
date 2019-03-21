@@ -7,13 +7,13 @@
    
   <!-- create headers and call tree-nodes to convert into lines: -->
   <xsl:template match="/">
-    <xsl:text>id,name,type,parent_id</xsl:text>
+    <xsl:text>id,name,type,parent_id_blue_tree,parent_id_yellow_tree</xsl:text>
     <xsl:apply-templates select="//Product"/>
   </xsl:template>
 
   <!-- create lines with tree-node data: -->
   <xsl:template match="Product">
-"<xsl:value-of select="@ID" />","<xsl:value-of select="fn:replace(Name, '&quot;','')" />","<xsl:value-of select="@UserTypeID" />","<xsl:value-of select="parent::node()/@ID" />"<xsl:text>&#xD;</xsl:text>
+"<xsl:value-of select="@ID" />","<xsl:value-of select="fn:replace(Name, '&quot;','')" />","<xsl:value-of select="@UserTypeID" />","<xsl:value-of select="parent::node()/@ID" />","<xsl:value-of select="ProductCrossReference[@Type='Primary CF']/@ProductID" />"<xsl:text>&#xD;</xsl:text>
   </xsl:template>
 
 </xsl:stylesheet>

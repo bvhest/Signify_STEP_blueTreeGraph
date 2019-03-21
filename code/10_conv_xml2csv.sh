@@ -15,8 +15,10 @@
 #java -cp /home/hestbv/Tools/Saxon/saxon9he.jar net.sf.saxon.Transform -t -s:../data/raw/nav_yellow_tree.xml -xsl:14_nav_yellow_tree_xml2csv.xsl -o:../data/csv/nav_yellow_tree.csv
 
 # product blue tree to product category-nodes, including category links :
-java -cp /home/hestbv/Tools/Saxon/saxon9he.jar net.sf.saxon.Transform -t -s:../data/raw/prod_blue_tree.xml -xsl:10_prod_blue_tree_xml2csv.xsl -o:../data/csv/prod_blue_tree.csv
+#java -cp /home/hestbv/Tools/Saxon/saxon9he.jar net.sf.saxon.Transform -t -s:../data/raw/prod_blue_tree.xml -xsl:10_prod_blue_tree_xml2csv.xsl -o:../data/csv/prod_blue_tree.csv
 
 # attribute definitions to attribute-nodes, including links to product blue-tree and links that are mandatory:
 #java -cp /home/hestbv/Tools/Saxon/saxon9he.jar net.sf.saxon.Transform -t -s:../data/raw/attributes.xml -xsl:12_attributes_xml2csv.xsl -o:../data/csv/attributes.csv
 
+# product assets:
+java -cp /home/hestbv/Tools/Saxon/saxon9he.jar net.sf.saxon.Transform -t -s:../data/raw/prod_blue_tree.xml -xsl:16_prod_assets_xml2csv.xsl -o:../data/csv/prod_assets.csv

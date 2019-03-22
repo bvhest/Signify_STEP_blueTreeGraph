@@ -1,4 +1,4 @@
-id,name,reference,mandatory
+id,name,valid_for,mandatory_for
 "ETIM.V6.EF008867 A","EF008867 - Fluorescent colour","",""
 "CAPTOP_MIN","Capacity Tolerance (Min)","",""
 "COLCON10KH_NOM","Color Consistency 10000 h (Nom)","IF-500;IF-502",""

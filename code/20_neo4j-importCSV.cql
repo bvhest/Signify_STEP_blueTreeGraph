@@ -35,7 +35,7 @@ CREATE CONSTRAINT ON (a:Attribute) ASSERT a.id IS UNIQUE;
 // Using CREATE will be more performand.
 
 USING PERIODIC COMMIT 5000
-LOAD csv WITH HEADERS FROM "file:///nav_yellow_tree_test.csv"
+LOAD csv WITH HEADERS FROM "file:///nav_yellow_tree.csv"
 AS nodes
 CREATE (yt:YellowTree {id: nodes.id, name: nodes.name, type: nodes.type});
 
@@ -49,13 +49,13 @@ CREATE (yt:YellowTree {id: nodes.id, name: nodes.name, type: nodes.type});
 // https://neo4j.com/developer/kb/how-do-i-use-load-csv-with-data-including-quotes/
 
 USING PERIODIC COMMIT 5000
-LOAD csv WITH HEADERS FROM "file:///prod_blue_tree_test.csv"
+LOAD csv WITH HEADERS FROM "file:///prod_blue_tree.csv"
 AS nodes
 CREATE (bt:BlueTree {id: nodes.id, name: nodes.name, type: nodes.type});
 
 
 USING PERIODIC COMMIT 5000
-LOAD csv WITH HEADERS FROM "file:///attributes_test.csv"
+LOAD csv WITH HEADERS FROM "file:///attributes.csv"
 AS nodes
 CREATE (attribute:Attribute {id: nodes.id, name: nodes.name});
 
@@ -89,7 +89,7 @@ schema await
 
 // yellow-tree relations
 USING PERIODIC COMMIT 5000
-LOAD csv WITH HEADERS FROM "file:///nav_yellow_tree_test.csv"
+LOAD csv WITH HEADERS FROM "file:///nav_yellow_tree.csv"
 AS rels
 MATCH (yellowtreeChild:YellowTree {id: rels.id}),(yellowtreeParent:YellowTree {id: rels.parent_id})
 CREATE (yellowtreeChild)-[rel:IS_CATEGORISED_BY]->(yellowtreeParent);
@@ -97,14 +97,14 @@ CREATE (yellowtreeChild)-[rel:IS_CATEGORISED_BY]->(yellowtreeParent);
 
 // blue-tree relations
 USING PERIODIC COMMIT 5000
-LOAD csv WITH HEADERS FROM "file:///prod_blue_tree_test.csv"
+LOAD csv WITH HEADERS FROM "file:///prod_blue_tree.csv"
 AS rels
 MATCH (bluetreeChild:BlueTree {id: rels.id}),(bluetreeParent:BlueTree {id: rels.parent_id_blue_tree})
 CREATE (bluetreeChild)-[rel:IS_CHILD_OF]->(bluetreeParent);
 
 // blue-tree-to-yellow-tree relations
 USING PERIODIC COMMIT 5000
-LOAD csv WITH HEADERS FROM "file:///prod_blue_tree_test.csv"
+LOAD csv WITH HEADERS FROM "file:///prod_blue_tree.csv"
 AS rels
 MATCH (bluetreeChild:BlueTree {id: rels.id}),(yellowtreeParent:YellowTree {id: rels.parent_id_yellow_tree})
 CREATE (bluetreeChild)-[rel:IS_CATEGORISED_BY]->(yellowtreeParent);
@@ -121,7 +121,7 @@ CREATE (bluetreeChild)-[rel:IS_CATEGORISED_BY]->(yellowtreeParent);
 //  - https://markhneedham.com/blog/2014/07/10/neo4j-load-csv-processing-hidden-arrays-in-your-csv-documents/
 
 USING PERIODIC COMMIT 5000
-LOAD csv WITH HEADERS FROM "file:///attributes_test.csv"
+LOAD csv WITH HEADERS FROM "file:///attributes.csv"
 AS row
 WITH row, split(row.valid_for, ";") AS rels
 UNWIND rels AS rel
@@ -135,7 +135,7 @@ ON MATCH SET r.mandatory = false;
 // not required as we have defined the mandatory attribute on the VALID_FOR-relation...
 //
 //USING PERIODIC COMMIT 5000
-//LOAD csv WITH HEADERS FROM "file:///attributes_test.csv"
+//LOAD csv WITH HEADERS FROM "file:///attributes.csv"
 //AS row
 //WITH row, split(row.mandatory_for, ";") AS rels
 //UNWIND rels AS rel
@@ -149,7 +149,7 @@ ON MATCH SET r.mandatory = false;
 //  - https://stackoverflow.com/questions/47567524/how-to-conditionally-add-property-to-relationship-from-csv-in-neo4j
 
 USING PERIODIC COMMIT 5000
-LOAD csv WITH HEADERS FROM "file:///attributes_test.csv"
+LOAD csv WITH HEADERS FROM "file:///attributes.csv"
 AS row
 WITH row, split(row.mandatory_for, ";") AS rels
 UNWIND rels AS rel

@@ -53,11 +53,39 @@ MATCH (p:BlueTree)-[:IS_CATEGORISED_BY*]->(yt:YellowTree),
 WHERE yt.id = "PROF-LEDSPOT" //LED spots
 RETURN DISTINCT spec, r.mandatory;  // query-time increases from 3000 to 4000 ms
 
-// DONE ! (2019-03-25)
-
-MATCH (p:BlueTree)-[:IS_CATEGORISED_BY*]->(yt:YellowTree),
+product-specification-relation.
+MATCH (p:BlueTree {type:"Final Product"})-[:IS_CATEGORISED_BY*]->(yt:YellowTree),
 (p:BlueTree)-[:IS_CHILD_OF*]->(bt:BlueTree)<-[r:IS_VALID_FOR]-(spec:Attribute)
 WHERE yt.id = "PROF-LEDSPOT" //LED spots
-RETURN DISTINCT yt.name, bt.id, bt.name, spec.id, spec.name , r.mandatory
-ORDER BY spec.id; // query-time increases from 4000 to 8500 ms
+RETURN DISTINCT spec, r.mandatory;
+
+// DONE ! (2019-03-25)
+
+
+// volgende queries werken niet
+
+// tel aantallen (verplichte) specs per product groep:
+MATCH (p:BlueTree {type:"Final Product"})-[:IS_CATEGORISED_BY*]->(yt:YellowTree {id:"PROF-LEDSPOT"}),  //LED spots
+(p:BlueTree)-[:IS_CHILD_OF*]->(if:BlueTree {type:"Industrial Family"})-[:IS_CHILD_OF*]->(bt:BlueTree)<-[r:IS_VALID_FOR]-(spec:Attribute)
+RETURN DISTINCT yt.name, if.id, if.name, count(spec.name) as valid_specifications, count(r.mandatory) as mandatory_specifications
+ORDER BY if.id; // query-time increases from 4000 to 8500 ms
+
+
+
+// not returning what i want
+MATCH (if:BlueTree {type:"Industrial Family"})-[:IS_CHILD_OF*]->(bt:BlueTree{id:"MPG-9948"}),
+(bt:BlueTree)<-[r:IS_VALID_FOR]-(spec:Attribute)
+RETURN DISTINCT if.id, if.type, if.name, spec.id, spec.name, r.mandatory
+ORDER BY if.id, if.type, if.name, spec.id;
+
+MATCH (if:BlueTree)-[:IS_CHILD_OF*]->(btroot:BlueTree{id:"SC-9314"}), // top of blue-tree
+(if:BlueTree)<-[r:IS_VALID_FOR]-(spec:Attribute) // required product-category
+WHERE if.type <> "Final Product"
+RETURN DISTINCT if.id, if.type, if.name, spec.id, spec.name, r.mandatory
+ORDER BY if.id, if.type, if.name, spec.id;
+
+MATCH (if:BlueTree)-[:IS_CHILD_OF*]->(btroot:BlueTree{id:"MPG-9948"})<-[r:IS_VALID_FOR]-(spec:Attribute) 
+WHERE if.type <> "Final Product" AND if.type <> "Technical Product"
+RETURN DISTINCT if.id, if.type, if.name, spec.id, spec.name, r.mandatory
+ORDER BY if.id, if.type, if.name, spec.id;
 
